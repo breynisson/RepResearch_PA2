@@ -15,5 +15,26 @@ data<-read.csv("repdata-data-StormData.csv.bz2")
 str(data)
 ```
 
+## Analysis
+
+We order the dataset based on the fatalities and injuries.
+
+```{r}
+ordered_by_fatalities<-data[order(-data$FATALITIES),]
+ordered_by_injuries<-data[order(-data$INJURIES),]
+```
+
+Let's take a look at the head of the ordered fatalities dataset:
+
+```{r}
+head(ordered_by_fatalities)
+```
+
+And the injuries dataset:
+
+```{r}
+head(ordered_by_injuries)
+```
+
 
 ## Results
