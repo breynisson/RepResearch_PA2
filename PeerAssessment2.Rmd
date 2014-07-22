@@ -1,0 +1,19 @@
+---
+title: Severe weather events on population health and economics.
+author: "Bjorgvin Reynisson"
+output: html_document
+---
+
+## Synopsis
+
+## Data Processing
+
+The data is read and we use the str() to take a peek at the data:
+
+```{r, cache=TRUE}
+data<-read.csv("repdata-data-StormData.csv.bz2")
+str(data)
+```
+
+
+## Results
