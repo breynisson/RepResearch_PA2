@@ -17,6 +17,7 @@ str(data)
 
 ## Analysis
 
+### The analysis of Fatalities and Injuries. Summary statistics for the United States.
 We order the dataset based on the fatalities and injuries.
 
 ```{r}
@@ -24,16 +25,22 @@ ordered_by_fatalities<-data[order(-data$FATALITIES),]
 ordered_by_injuries<-data[order(-data$INJURIES),]
 ```
 
-Let's take a look at the head of the ordered fatalities dataset:
+We will select the top-20 event-types from each dataset and look at those in more detail.
 
 ```{r}
-head(ordered_by_fatalities)
+top_fatalities<-ordered_by_fatalities[1:20,]
+tf<-top_fatalities[,c("EVTYPE", "FATALITIES")]
+tf
+top_injuries<-ordered_by_injuries[1:20,]
+ti<-top_injuries[,c("EVTYPE", "INJURIES")]
+ti
 ```
 
-And the injuries dataset:
-
 ```{r}
-head(ordered_by_injuries)
+library(plyr)
+count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
+count(ti, vars = "EVTYPE", wt_var = "INJURIES")
+
 ```
 
 
