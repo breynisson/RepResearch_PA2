@@ -309,25 +309,27 @@ ti
 </code></pre>
 
 <pre><code class="r">library(plyr)
-count(tf, vars = &quot;EVTYPE&quot;, wt_var = &quot;FATALITIES&quot;)
+c_tf&lt;-count(tf, vars = &quot;EVTYPE&quot;, wt_var = &quot;FATALITIES&quot;)
+c_ti&lt;-count(ti, vars = &quot;EVTYPE&quot;, wt_var = &quot;INJURIES&quot;)
+c_tf[order(-c_tf$freq),]
 </code></pre>
 
 <pre><code>##           EVTYPE freq
+## 4        TORNADO  821
+## 3           HEAT  583
 ## 1 EXCESSIVE HEAT  419
 ## 2   EXTREME HEAT   57
-## 3           HEAT  583
-## 4        TORNADO  821
 </code></pre>
 
-<pre><code class="r">count(ti, vars = &quot;EVTYPE&quot;, wt_var = &quot;INJURIES&quot;)
+<pre><code class="r">c_ti[order(-c_ti$freq),]
 </code></pre>
 
 <pre><code>##              EVTYPE  freq
-## 1    EXCESSIVE HEAT   519
-## 2             FLOOD  2700
-## 3 HURRICANE/TYPHOON   780
-## 4         ICE STORM  1568
 ## 5           TORNADO 10674
+## 2             FLOOD  2700
+## 4         ICE STORM  1568
+## 3 HURRICANE/TYPHOON   780
+## 1    EXCESSIVE HEAT   519
 </code></pre>
 
 <h2>Results</h2>

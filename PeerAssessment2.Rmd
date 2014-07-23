@@ -38,9 +38,10 @@ ti
 
 ```{r}
 library(plyr)
-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
-
+c_tf<-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
+c_ti<-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
+c_tf[order(-c_tf$freq),]
+c_ti[order(-c_ti$freq),]
 ```
 
 

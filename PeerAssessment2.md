@@ -134,28 +134,30 @@ ti
 
 ```r
 library(plyr)
-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
+c_tf<-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
+c_ti<-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
+c_tf[order(-c_tf$freq),]
 ```
 
 ```
 ##           EVTYPE freq
+## 4        TORNADO  821
+## 3           HEAT  583
 ## 1 EXCESSIVE HEAT  419
 ## 2   EXTREME HEAT   57
-## 3           HEAT  583
-## 4        TORNADO  821
 ```
 
 ```r
-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
+c_ti[order(-c_ti$freq),]
 ```
 
 ```
 ##              EVTYPE  freq
-## 1    EXCESSIVE HEAT   519
-## 2             FLOOD  2700
-## 3 HURRICANE/TYPHOON   780
-## 4         ICE STORM  1568
 ## 5           TORNADO 10674
+## 2             FLOOD  2700
+## 4         ICE STORM  1568
+## 3 HURRICANE/TYPHOON   780
+## 1    EXCESSIVE HEAT   519
 ```
 
 
