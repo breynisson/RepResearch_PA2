@@ -160,5 +160,49 @@ c_ti[order(-c_ti$freq),]
 ## 1    EXCESSIVE HEAT   519
 ```
 
+From the two tables, we see that tornados are the biggest cause of injuries in the US, and the second biggest cause of fatalities. The number one cause of fatalities in the US is heat. 
+
+### The analysis of Fatalities and Injuries. State-by-state analysis.
+
+We would like to analyze the fatalities and injuries caused by weather in each state.
+
+
+```r
+fatalities_by_state<-data[order(data$STATE, -data$FATALITIES),]
+injuries_by_state<-data[order(data$STATE, -data$INJURIES),]
+```
+
+We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
+
+
+```r
+fatalities_by_state<-fatalities_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
+injuries_by_state<-injuries_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
+head(fatalities_by_state)
+```
+
+```
+##        STATE         EVTYPE FATALITIES
+## 188990    AK  MARINE MISHAP          6
+## 348627    AK      AVALANCHE          6
+## 348623    AK      ICE STORM          5
+## 189053    AK HIGH WIND/SEAS          4
+## 449520    AK          FLOOD          3
+## 380114    AK   WINTER STORM          2
+```
+
 
 ## Results
+
+
+
+
+
+
+
+
+
+
+
+
+
