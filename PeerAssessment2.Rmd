@@ -44,5 +44,15 @@ c_tf[order(-c_tf$freq),]
 c_ti[order(-c_ti$freq),]
 ```
 
+From the two tables, we see that tornados are the biggest cause of injuries, and the second biggest cause of fatalities. The number one cause of fatalities is heat. 
+
+### The analysis of Fatalities and Injuries. State-by-state analysis.
+
+We would like to analyze the fatalities and injuries caused by weather in each state.
+
+```{r}
+per_state_fatal<-ddply(data, .variables="STATE", fun=variables[order(-data$FATALITIES),])
+per_state_fatal
+```
 
 ## Results
