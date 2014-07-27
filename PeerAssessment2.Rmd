@@ -146,7 +146,7 @@ fp<-ggplot(map_data_fat, aes(map_id = region)) +
         axis.text =  element_blank()) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
-  ggtitle("Total Fatalities per State due to weather events")
+  ggtitle("Fatalities")
 
 tmp_inj<-merge(total_injuries_per_state, state_names)
 map_data_inj<-merge(tmp_inj, all_states, by='region')
@@ -164,10 +164,6 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
 
 ```
 
-```{r, fig.height=10}
-library(gridExtra)
-grid.arrange(arrangeGrob(arrangeGrob(fp, ip), ncol=1))
-```
 
 ```{r, fig.cap="Fatalities/Injuries per State due to weather events"}
 subplot<-function(r,c){
