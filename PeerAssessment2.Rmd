@@ -1,3 +1,7 @@
+---
+output:
+  html_document: default
+---
 # Severe weather events on population health and economics.
 
 ## Synopsis
@@ -161,11 +165,12 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
   ggtitle("Injuries")
-
 ```
 
 
-```{r, fig.cap="Fatalities/Injuries per State due to weather events"}
+```{r, fig.cap=c("Fatalities and Injuries per State"), fig.width=10}
+
+library(gridExtra)
 subplot<-function(r,c){
   viewport(layout.pos.col=c, layout.pos.row=r)
 }
@@ -175,12 +180,9 @@ vplayout<-function(r,c){
   pushViewport(viewport(layout=grid.layout(r,c)))
 }
 vplayout(1,2)
-plot(fp, vp=subplot(1,1))
+plot(fp, vp=subplot(1,1), main=c("Fatalities and Injuries per State"))
 plot(ip, vp=subplot(1,2))
 ```
-
-### Economic Consequences. Summary statistics for the United States.
-
 
 
 

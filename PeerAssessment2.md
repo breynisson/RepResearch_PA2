@@ -1,3 +1,7 @@
+---
+output:
+  html_document: default
+---
 # Severe weather events on population health and economics.
 
 ## Synopsis
@@ -394,7 +398,7 @@ fp<-ggplot(map_data_fat, aes(map_id = region)) +
         axis.text =  element_blank()) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
-  ggtitle("Total Fatalities per State due to weather events")
+  ggtitle("Fatalities")
 
 tmp_inj<-merge(total_injuries_per_state, state_names)
 map_data_inj<-merge(tmp_inj, all_states, by='region')
@@ -412,22 +416,9 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
 ```
 
 
+
 ```r
 library(gridExtra)
-```
-
-```
-## Loading required package: grid
-```
-
-```r
-grid.arrange(arrangeGrob(arrangeGrob(fp, ip), ncol=1))
-```
-
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
-
-
-```r
 subplot<-function(r,c){
   viewport(layout.pos.col=c, layout.pos.row=r)
 }
@@ -437,14 +428,11 @@ vplayout<-function(r,c){
   pushViewport(viewport(layout=grid.layout(r,c)))
 }
 vplayout(1,2)
-plot(fp, vp=subplot(1,1))
+plot(fp, vp=subplot(1,1), main=c("Fatalities and Injuries per State"))
 plot(ip, vp=subplot(1,2))
 ```
 
-![Fatalities/Injuries per State due to weather events](figure/unnamed-chunk-17.png) 
-
-### Economic Consequences. Summary statistics for the United States.
-
+![Fatalities and Injuries per State](figure/unnamed-chunk-16.png) 
 
 
 
