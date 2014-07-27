@@ -174,7 +174,14 @@ Then sum the datasets by state:
 ```r
 fatalities_by_state_s<-ddply(fatalities_by_state, .(STATE, EVTYPE), 
                              summarize, FATALITIES=sum(FATALITIES))
+
+total_fatalities_per_state<-ddply(fatalities_by_state, .(STATE), 
+                             summarize, FATALITIES=sum(FATALITIES))
+
 injuries_by_state_s<-ddply(injuries_by_state, .(STATE, EVTYPE), 
+                             summarize, INJURIES=sum(INJURIES))
+
+total_injuries_per_state<-ddply(injuries_by_state, .(STATE), 
                              summarize, INJURIES=sum(INJURIES))
 ```
 
@@ -365,18 +372,29 @@ top_injuries_per_state
 ```
 
 
-Let's make perperations for displaying the data:
+Let's make preperations for displaying the data :
 
 ```r
 library(ggplot2)
 library(maps)
 library(datasets)
 all_states<-map_data("state")
-state_names<-data.frame(STATE=state.abb, State=tolower(state.name))
+state_names<-data.frame(STATE=state.abb, region=tolower(state.name))
 tmp<-merge(top_fatalities_per_state, state_names)
-p<-ggplot()
-p<- p + geom_polygon(data=all_states, aes(x=long, y=lat, group = group),colour="white", fill="grey10" )
+map_data<-merge(tmp, all_states, by='region')
+ggplot(map_data, aes(map_id = region)) +
+  geom_map(aes(fill = FATALITIES), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("")
 ```
+
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
 
 
 ### Economic Consequences. Summary statistics for the United States.
