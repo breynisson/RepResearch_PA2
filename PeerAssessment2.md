@@ -72,7 +72,7 @@ str(data$BGN_DATE)
 
 ## Analysis
 
-### The analysis of Fatalities and Injuries. Summary statistics for the United States.
+### Analysis of Fatalities and Injuries. Summary statistics for the United States.
 We take a look at what timeframe we are investigating. 
 
 The first date is
@@ -150,7 +150,7 @@ injuries
 
 From the two tables, we see that in the time period from 1950-01-03 to 2011-11-30, Tornados are the most harmful weather events to public health.
 
-### The analysis of Fatalities and Injuries. State-by-state analysis.
+### Analysis of Fatalities and Injuries. State-by-state analysis.
 
 We would like to analyze the fatalities and injuries caused by weather in each state.
 
@@ -363,6 +363,7 @@ top_injuries_per_state
 ## 71    WY             WINTER STORM      119
 ## 72    XX MARINE THUNDERSTORM WIND        0
 ```
+
 
 
 
