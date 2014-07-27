@@ -1,7 +1,3 @@
----
-output:
-  html_document: default
----
 # Severe weather events on population health and economics.
 
 ## Synopsis
@@ -398,7 +394,7 @@ fp<-ggplot(map_data_fat, aes(map_id = region)) +
         axis.text =  element_blank()) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
-  ggtitle("Fatalities")
+  ggtitle("")
 
 tmp_inj<-merge(total_injuries_per_state, state_names)
 map_data_inj<-merge(tmp_inj, all_states, by='region')
@@ -412,27 +408,17 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
         axis.text =  element_blank()) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
-  ggtitle("Injuries")
+  ggtitle("")
 ```
 
 
 
 ```r
 library(gridExtra)
-subplot<-function(r,c){
-  viewport(layout.pos.col=c, layout.pos.row=r)
-}
-
-vplayout<-function(r,c){
-  grid.newpage()
-  pushViewport(viewport(layout=grid.layout(r,c)))
-}
-vplayout(1,2)
-plot(fp, vp=subplot(1,1), main=c("Fatalities and Injuries per State"))
-plot(ip, vp=subplot(1,2))
+grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State"))
 ```
 
-![Fatalities and Injuries per State](figure/unnamed-chunk-16.png) 
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
 
 
 
