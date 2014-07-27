@@ -39,7 +39,7 @@ injuries
 ```
 
 
-From the two tables, we see that tornados are the biggest cause of injuries in the US, and the second biggest cause of fatalities. The number one cause of fatalities in the US is heat. 
+From the two tables, tornados seem to be the most harmful weather effect to population health across the United States.
 
 ### The analysis of Fatalities and Injuries. State-by-state analysis.
 
@@ -79,12 +79,25 @@ injuries_by_state_r<-arrange(injuries_by_state_s,
 
 ```
 
-We then reduce the data to the top three fatalities/injury causes in each state:
+We then reduce the data to the top fatalities/injury causes in each state:
 
 ```{r}
-top_fatalities_per_state<-ddply(fatalities_by_state_r, .(STATE), function(x)x[1:3,])
-top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE), function(x)x[1:3,])
+top_fatalities_per_state<-ddply(fatalities_by_state_r, .(STATE), 
+                                function(x)x[1,])
+top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE), 
+                              function(x)x[1,])
 ```
+
+**Top causes of Fatalities per State:**
+```{r}
+top_fatalities_per_state
+```
+
+**Top causes of Injuries per State:**
+```{r}
+top_injuries_per_state
+```
+
 
 
 ## Results

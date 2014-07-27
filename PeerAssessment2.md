@@ -113,7 +113,7 @@ injuries
 ```
 
 
-From the two tables, we see that tornados are the biggest cause of injuries in the US, and the second biggest cause of fatalities. The number one cause of fatalities in the US is heat. 
+From the two tables, tornados seem to be the most harmful weather effect to population health across the United States.
 
 ### The analysis of Fatalities and Injuries. State-by-state analysis.
 
@@ -155,13 +155,180 @@ injuries_by_state_r<-arrange(injuries_by_state_s,
                                -injuries_by_state_s$INJURIES)
 ```
 
-We then reduce the data to the top three fatalities/injury causes in each state:
+We then reduce the data to the top fatalities/injury causes in each state:
 
 
 ```r
-top_fatalities_per_state<-ddply(fatalities_by_state_r, .(STATE), function(x)x[1:3,])
-top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE), function(x)x[1:3,])
+top_fatalities_per_state<-ddply(fatalities_by_state_r, .(STATE), 
+                                function(x)x[1,])
+top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE), 
+                              function(x)x[1,])
 ```
+
+**Top causes of Fatalities per State:**
+
+```r
+top_fatalities_per_state
+```
+
+```
+##    STATE                   EVTYPE FATALITIES
+## 1     AK                AVALANCHE         33
+## 2     AL                  TORNADO        617
+## 3     AM MARINE THUNDERSTORM WIND          6
+## 4     AN         MARINE TSTM WIND          6
+## 5     AR                  TORNADO        379
+## 6     AS                  TSUNAMI         32
+## 7     AZ              FLASH FLOOD         62
+## 8     CA           EXCESSIVE HEAT        110
+## 9     CO                AVALANCHE         48
+## 10    CT                HIGH WIND          6
+## 11    DC           EXCESSIVE HEAT         20
+## 12    DE           EXCESSIVE HEAT          7
+## 13    FL              RIP CURRENT        172
+## 14    GA                  TORNADO        180
+## 15    GM MARINE THUNDERSTORM WIND          1
+## 16    GU              RIP CURRENT         20
+## 17    HI                HIGH SURF         21
+## 18    IA                  TORNADO         81
+## 19    ID                AVALANCHE         16
+## 20    IL                     HEAT        653
+## 21    IN                  TORNADO        252
+## 22    KS                  TORNADO        236
+## 23    KY                  TORNADO        125
+## 24    LA                  TORNADO        153
+## 25    LC              MARINE HAIL          0
+## 26    LE              MARINE HAIL          0
+## 27    LH              MARINE HAIL          0
+## 28    LM       MARINE STRONG WIND          2
+## 29    LO              MARINE HAIL          0
+## 30    LS       MARINE STRONG WIND          1
+## 31    MA                  TORNADO        108
+## 32    MD           EXCESSIVE HEAT         88
+## 33    ME                LIGHTNING          6
+## 34    MH                HIGH SURF          0
+## 35    MI                  TORNADO        243
+## 36    MN                  TORNADO         99
+## 37    MO                  TORNADO        388
+## 38    MS                  TORNADO        450
+## 39    MT                LIGHTNING          9
+## 40    NC                  TORNADO        126
+## 41    ND                  TORNADO         25
+## 42    NE                  TORNADO         54
+## 43    NH                TSTM WIND          6
+## 44    NJ           EXCESSIVE HEAT         39
+## 45    NM              FLASH FLOOD         16
+## 46    NV                     HEAT         54
+## 47    NY           EXCESSIVE HEAT         93
+## 48    OH                  TORNADO        191
+## 49    OK                  TORNADO        296
+## 50    OR                HIGH WIND         19
+## 51    PA           EXCESSIVE HEAT        359
+## 52    PH       MARINE STRONG WIND          1
+## 53    PK         MARINE HIGH WIND          0
+## 54    PM               WATERSPOUT          0
+## 55    PR              FLASH FLOOD         34
+## 56    PZ       MARINE STRONG WIND          5
+## 57    RI                     HEAT          2
+## 58    SC                  TORNADO         59
+## 59    SD                  TORNADO         18
+## 60    SL              MARINE HAIL          0
+## 61    ST             STRONG WINDS          0
+## 62    TN                  TORNADO        368
+## 63    TX                  TORNADO        538
+## 64    UT                AVALANCHE         44
+## 65    VA                  TORNADO         36
+## 66    VI                HIGH SURF          3
+## 67    VT                    FLOOD          4
+## 68    WA                AVALANCHE         35
+## 69    WI                  TORNADO         96
+## 70    WV              FLASH FLOOD         24
+## 71    WY                AVALANCHE         23
+## 72    XX MARINE THUNDERSTORM WIND          0
+```
+
+**Top causes of Injuries per State:**
+
+```r
+top_injuries_per_state
+```
+
+```
+##    STATE                   EVTYPE INJURIES
+## 1     AK                ICE STORM       34
+## 2     AL                  TORNADO     7929
+## 3     AM MARINE THUNDERSTORM WIND       22
+## 4     AN       MARINE STRONG WIND       18
+## 5     AR                  TORNADO     5116
+## 6     AS                  TSUNAMI      129
+## 7     AZ               DUST STORM      179
+## 8     CA                 WILDFIRE      623
+## 9     CO                  TORNADO      261
+## 10    CT                  TORNADO      703
+## 11    DC           EXCESSIVE HEAT      316
+## 12    DE                  TORNADO       73
+## 13    FL                  TORNADO     3340
+## 14    GA                  TORNADO     3926
+## 15    GM              MARINE HAIL        0
+## 16    GU        HURRICANE/TYPHOON      333
+## 17    HI              STRONG WIND       20
+## 18    IA                  TORNADO     2208
+## 19    ID        THUNDERSTORM WIND       74
+## 20    IL                  TORNADO     4145
+## 21    IN                  TORNADO     4224
+## 22    KS                  TORNADO     2721
+## 23    KY                  TORNADO     2806
+## 24    LA                  TORNADO     2637
+## 25    LC              MARINE HAIL        0
+## 26    LE              MARINE HAIL        0
+## 27    LH              MARINE HAIL        0
+## 28    LM       MARINE STRONG WIND        1
+## 29    LO              MARINE HAIL        0
+## 30    LS              MARINE HAIL        0
+## 31    MA                  TORNADO     1758
+## 32    MD           EXCESSIVE HEAT      461
+## 33    ME                LIGHTNING       70
+## 34    MH                HIGH SURF        1
+## 35    MI                  TORNADO     3362
+## 36    MN                  TORNADO     1976
+## 37    MO                  TORNADO     4330
+## 38    MS                  TORNADO     6244
+## 39    MT         WILD/FOREST FIRE       33
+## 40    NC                  TORNADO     2536
+## 41    ND                  TORNADO      326
+## 42    NE                  TORNADO     1158
+## 43    NH                LIGHTNING       85
+## 44    NJ           EXCESSIVE HEAT      300
+## 45    NM                  TORNADO      155
+## 46    NV                    FLOOD       50
+## 47    NY                  TORNADO      315
+## 48    OH                  TORNADO     4438
+## 49    OK                  TORNADO     4829
+## 50    OR                HIGH WIND       50
+## 51    PA                  TORNADO     1241
+## 52    PH       MARINE STRONG WIND        0
+## 53    PK         MARINE HIGH WIND        0
+## 54    PM               WATERSPOUT        0
+## 55    PR               HEAVY RAIN       10
+## 56    PZ       MARINE STRONG WIND        3
+## 57    RI                  TORNADO       23
+## 58    SC                  TORNADO     1314
+## 59    SD                  TORNADO      452
+## 60    SL              MARINE HAIL        0
+## 61    ST             STRONG WINDS        0
+## 62    TN                  TORNADO     4748
+## 63    TX                  TORNADO     8207
+## 64    UT             WINTER STORM      415
+## 65    VA                  TORNADO      914
+## 66    VI                LIGHTNING        1
+## 67    VT                TSTM WIND       24
+## 68    WA                  TORNADO      303
+## 69    WI                  TORNADO     1601
+## 70    WV                TSTM WIND      142
+## 71    WY             WINTER STORM      119
+## 72    XX MARINE THUNDERSTORM WIND        0
+```
+
 
 
 ## Results
