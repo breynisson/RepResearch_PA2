@@ -177,18 +177,37 @@ We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
 
 ```r
 fatalities_by_state<-fatalities_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
-injuries_by_state<-injuries_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
-head(fatalities_by_state)
+injuries_by_state<-injuries_by_state[,c("STATE", "EVTYPE", "INJURIES")]
 ```
 
+Then sum the datasets by state:
+
+
+```r
+fatalities_by_state_s<-ddply(fatalities_by_state, .(STATE, EVTYPE), 
+                             summarize, FATALITIES=sum(FATALITIES))
+injuries_by_state_s<-ddply(injuries_by_state, .(STATE, EVTYPE), 
+                             summarize, INJURIES=sum(INJURIES))
 ```
-##        STATE         EVTYPE FATALITIES
-## 188990    AK  MARINE MISHAP          6
-## 348627    AK      AVALANCHE          6
-## 348623    AK      ICE STORM          5
-## 189053    AK HIGH WIND/SEAS          4
-## 449520    AK          FLOOD          3
-## 380114    AK   WINTER STORM          2
+
+And sort by decsending number of fatalities/injuries per state:
+
+
+```r
+fatalities_by_state_r<-arrange(fatalities_by_state_s, 
+                               fatalities_by_state_s$STATE,
+                               -fatalities_by_state_s$FATALITIES)
+injuries_by_state_r<-arrange(injuries_by_state_s, 
+                               injuries_by_state_s$STATE,
+                               -injuries_by_state_s$INJURIES)
+```
+
+We then reduce the data to the top three fatalities/injury causes in each state:
+
+
+```r
+top_fatalities_per_state<-ddply(fatalities_by_state_r, .(STATE), function(x)x[1:3,])
+top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE), function(x)x[1:3,])
 ```
 
 
