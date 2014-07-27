@@ -64,101 +64,54 @@ We order the dataset based on the fatalities and injuries.
 
 
 ```r
-ordered_by_fatalities<-data[order(-data$FATALITIES),]
-ordered_by_injuries<-data[order(-data$INJURIES),]
-```
-
-We will select the top-20 event-types from each dataset and look at those in more detail.
-
-
-```r
-top_fatalities<-ordered_by_fatalities[1:20,]
-tf<-top_fatalities[,c("EVTYPE", "FATALITIES")]
-tf
-```
-
-```
-##                EVTYPE FATALITIES
-## 198704           HEAT        583
-## 862634        TORNADO        158
-## 68670         TORNADO        116
-## 148852        TORNADO        114
-## 355128 EXCESSIVE HEAT         99
-## 67884         TORNADO         90
-## 46309         TORNADO         75
-## 371112 EXCESSIVE HEAT         74
-## 230927 EXCESSIVE HEAT         67
-## 78567         TORNADO         57
-## 247938   EXTREME HEAT         57
-## 6370          TORNADO         50
-## 598500 EXCESSIVE HEAT         49
-## 606363 EXCESSIVE HEAT         46
-## 860386        TORNADO         44
-## 157885        TORNADO         42
-## 362850 EXCESSIVE HEAT         42
-## 629242 EXCESSIVE HEAT         42
-## 78123         TORNADO         38
-## 83578         TORNADO         37
-```
-
-```r
-top_injuries<-ordered_by_injuries[1:20,]
-ti<-top_injuries[,c("EVTYPE", "INJURIES")]
-ti
-```
-
-```
-##                   EVTYPE INJURIES
-## 157885           TORNADO     1700
-## 223449         ICE STORM     1568
-## 67884            TORNADO     1228
-## 116011           TORNADO     1150
-## 862634           TORNADO     1150
-## 344159             FLOOD      800
-## 860386           TORNADO      800
-## 68670            TORNADO      785
-## 529351 HURRICANE/TYPHOON      780
-## 344178             FLOOD      750
-## 858228           TORNADO      700
-## 344158             FLOOD      600
-## 148852           TORNADO      597
-## 35124            TORNADO      560
-## 344163             FLOOD      550
-## 667233    EXCESSIVE HEAT      519
-## 78567            TORNADO      504
-## 16503            TORNADO      500
-## 29566            TORNADO      500
-## 153749           TORNADO      500
-```
-
-
-```r
 library(plyr)
-c_tf<-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
-c_ti<-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
-c_tf[order(-c_tf$freq),]
+fatalities<-count(data, vars = "EVTYPE", wt_var = "FATALITIES")
+fatalities<-fatalities[order(-fatalities$freq),]
+
+injuries<-count(data, vars = "EVTYPE", wt_var = "INJURIES")
+injuries<-injuries[order(-injuries$freq),]
+```
+
+And then reduce the data to the top 10 causes:
+
+```r
+fatalities<-fatalities[1:10,]
+fatalities
 ```
 
 ```
-##           EVTYPE freq
-## 4        TORNADO  821
-## 3           HEAT  583
-## 1 EXCESSIVE HEAT  419
-## 2   EXTREME HEAT   57
+##             EVTYPE freq
+## 826        TORNADO 5633
+## 124 EXCESSIVE HEAT 1903
+## 151    FLASH FLOOD  978
+## 271           HEAT  937
+## 453      LIGHTNING  816
+## 846      TSTM WIND  504
+## 167          FLOOD  470
+## 572    RIP CURRENT  368
+## 343      HIGH WIND  248
+## 19       AVALANCHE  224
 ```
 
 ```r
-c_ti[order(-c_ti$freq),]
+injuries<-injuries[1:10,]
+injuries
 ```
 
 ```
-##              EVTYPE  freq
-## 5           TORNADO 10674
-## 2             FLOOD  2700
-## 4         ICE STORM  1568
-## 3 HURRICANE/TYPHOON   780
-## 1    EXCESSIVE HEAT   519
+##                EVTYPE  freq
+## 826           TORNADO 91346
+## 846         TSTM WIND  6957
+## 167             FLOOD  6789
+## 124    EXCESSIVE HEAT  6525
+## 453         LIGHTNING  5230
+## 271              HEAT  2100
+## 422         ICE STORM  1975
+## 151       FLASH FLOOD  1777
+## 753 THUNDERSTORM WIND  1488
+## 241              HAIL  1361
 ```
+
 
 From the two tables, we see that tornados are the biggest cause of injuries in the US, and the second biggest cause of fatalities. The number one cause of fatalities in the US is heat. 
 

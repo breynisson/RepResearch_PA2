@@ -21,28 +21,23 @@ str(data)
 We order the dataset based on the fatalities and injuries.
 
 ```{r}
-ordered_by_fatalities<-data[order(-data$FATALITIES),]
-ordered_by_injuries<-data[order(-data$INJURIES),]
-```
-
-We will select the top-20 event-types from each dataset and look at those in more detail.
-
-```{r}
-top_fatalities<-ordered_by_fatalities[1:20,]
-tf<-top_fatalities[,c("EVTYPE", "FATALITIES")]
-tf
-top_injuries<-ordered_by_injuries[1:20,]
-ti<-top_injuries[,c("EVTYPE", "INJURIES")]
-ti
-```
-
-```{r}
 library(plyr)
-c_tf<-count(tf, vars = "EVTYPE", wt_var = "FATALITIES")
-c_ti<-count(ti, vars = "EVTYPE", wt_var = "INJURIES")
-c_tf[order(-c_tf$freq),]
-c_ti[order(-c_ti$freq),]
+fatalities<-count(data, vars = "EVTYPE", wt_var = "FATALITIES")
+fatalities<-fatalities[order(-fatalities$freq),]
+
+injuries<-count(data, vars = "EVTYPE", wt_var = "INJURIES")
+injuries<-injuries[order(-injuries$freq),]
 ```
+
+And then reduce the data to the top 10 causes:
+```{r}
+fatalities<-fatalities[1:10,]
+fatalities
+
+injuries<-injuries[1:10,]
+injuries
+```
+
 
 From the two tables, we see that tornados are the biggest cause of injuries in the US, and the second biggest cause of fatalities. The number one cause of fatalities in the US is heat. 
 
