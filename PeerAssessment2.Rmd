@@ -164,7 +164,7 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
 ```
 
 
-```{r, fig.height=5, fig.width=9}
+```{r popHealthPerState, fig.height=6, fig.width=12}
 library(gridExtra)
 grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State"))
 ```

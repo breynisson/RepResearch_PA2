@@ -418,7 +418,7 @@ library(gridExtra)
 grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State"))
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
+![plot of chunk popHealthPerState](figure/popHealthPerState.png) 
 
 
 
