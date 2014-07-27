@@ -11,10 +11,33 @@ data<-read.csv("repdata-data-StormData.csv.bz2")
 str(data)
 ```
 
+We start off by converting the BGN_DATE column data to date-type. We also discard the time data in this column:
+
+```{r}
+data$BGN_DATE<-as.Date(as.character(data$BGN_DATE), "%m/%d/%Y")
+```
+
+And check that the converstion is OK:
+```{r}
+str(data$BGN_DATE)
+```
+
 ## Analysis
 
 ### The analysis of Fatalities and Injuries. Summary statistics for the United States.
-We order the dataset based on the fatalities and injuries.
+We take a look at what timeframe we are investigating. 
+
+The first date is
+```{r}
+min(data$BGN_DATE)
+```
+
+while the last date in the dataset is 
+```{r}
+max(data$BGN_DATE)
+```
+
+We want to find out what are the most harmful weather effects to the population in the United States over the whole timeframe in question. To this end, we will look at fatalities and injuries. We will investigate these seperatly. We order the dataset based on the fatalities and injuries.
 
 ```{r}
 library(plyr)
@@ -35,22 +58,22 @@ injuries
 ```
 
 
-From the two tables, we see that Tornados are the most harmful weather events to public health.
+From the two tables, we see that in the time period from `r min(data$BGN_DATE)` to `r max(data$BGN_DATE)`, Tornados are the most harmful weather events to public health.
 
 ### The analysis of Fatalities and Injuries. State-by-state analysis.
 
 We would like to analyze the fatalities and injuries caused by weather in each state.
 
 ```{r}
-fatalities_by_state<-data[order(data$STATE, -data$FATALITIES),]
-injuries_by_state<-data[order(data$STATE, -data$INJURIES),]
+fatalities_by_state_tmp<-data[order(data$STATE, -data$FATALITIES),]
+injuries_by_state_tmp<-data[order(data$STATE, -data$INJURIES),]
 ```
 
 We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
 
 ```{r}
-fatalities_by_state<-fatalities_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
-injuries_by_state<-injuries_by_state[,c("STATE", "EVTYPE", "INJURIES")]
+fatalities_by_state<-fatalities_by_state_tmp[,c("STATE", "EVTYPE", "FATALITIES")]
+injuries_by_state<-injuries_by_state_tmp[,c("STATE", "EVTYPE", "INJURIES")]
 ```
 
 Then sum the datasets by state:

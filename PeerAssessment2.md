@@ -16,22 +16,22 @@ str(data)
 ## 'data.frame':	902297 obs. of  37 variables:
 ##  $ STATE__   : num  1 1 1 1 1 1 1 1 1 1 ...
 ##  $ BGN_DATE  : Factor w/ 16335 levels "1/1/1966 0:00:00",..: 6523 6523 4242 11116 2224 2224 2260 383 3980 3980 ...
-##  $ BGN_TIME  : Factor w/ 3608 levels "000","0000","0001",..: 152 167 2645 1563 2524 3126 122 1563 3126 3126 ...
-##  $ TIME_ZONE : Factor w/ 22 levels "ADT","AKS","AST",..: 6 6 6 6 6 6 6 6 6 6 ...
+##  $ BGN_TIME  : Factor w/ 3608 levels "00:00:00 AM",..: 272 287 2705 1683 2584 3186 242 1683 3186 3186 ...
+##  $ TIME_ZONE : Factor w/ 22 levels "ADT","AKS","AST",..: 7 7 7 7 7 7 7 7 7 7 ...
 ##  $ COUNTY    : num  97 3 57 89 43 77 9 123 125 57 ...
 ##  $ COUNTYNAME: Factor w/ 29601 levels "","5NM E OF MACKINAC BRIDGE TO PRESQUE ISLE LT MI",..: 13513 1873 4598 10592 4372 10094 1973 23873 24418 4598 ...
 ##  $ STATE     : Factor w/ 72 levels "AK","AL","AM",..: 2 2 2 2 2 2 2 2 2 2 ...
-##  $ EVTYPE    : Factor w/ 985 levels "   HIGH SURF ADVISORY",..: 826 826 826 826 826 826 826 826 826 826 ...
+##  $ EVTYPE    : Factor w/ 985 levels "   HIGH SURF ADVISORY",..: 834 834 834 834 834 834 834 834 834 834 ...
 ##  $ BGN_RANGE : num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ BGN_AZI   : Factor w/ 35 levels "","  N"," NW",..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ BGN_LOCATI: Factor w/ 54429 levels ""," Christiansburg",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ BGN_LOCATI: Factor w/ 54429 levels "","- 1 N Albion",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ END_DATE  : Factor w/ 6663 levels "","1/1/1993 0:00:00",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ END_TIME  : Factor w/ 3647 levels ""," 0900CST",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ COUNTY_END: num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ COUNTYENDN: logi  NA NA NA NA NA NA ...
 ##  $ END_RANGE : num  0 0 0 0 0 0 0 0 0 0 ...
 ##  $ END_AZI   : Factor w/ 24 levels "","E","ENE","ESE",..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ END_LOCATI: Factor w/ 34506 levels ""," CANTON"," TULIA",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ END_LOCATI: Factor w/ 34506 levels "","- .5 NNW",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ LENGTH    : num  14 2 0.1 0 0 1.5 1.5 0 3.3 2.3 ...
 ##  $ WIDTH     : num  100 150 123 100 150 177 33 33 100 100 ...
 ##  $ F         : int  3 2 2 2 2 2 2 1 3 3 ...
@@ -39,9 +39,9 @@ str(data)
 ##  $ FATALITIES: num  0 0 0 0 0 0 0 0 1 0 ...
 ##  $ INJURIES  : num  15 0 2 2 2 6 1 0 14 0 ...
 ##  $ PROPDMG   : num  25 2.5 25 2.5 2.5 2.5 2.5 2.5 25 25 ...
-##  $ PROPDMGEXP: Factor w/ 19 levels "","+","-","0",..: 16 16 16 16 16 16 16 16 16 16 ...
+##  $ PROPDMGEXP: Factor w/ 19 levels "","-","?","+",..: 17 17 17 17 17 17 17 17 17 17 ...
 ##  $ CROPDMG   : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ CROPDMGEXP: Factor w/ 9 levels "","0","2","?",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ CROPDMGEXP: Factor w/ 9 levels "","?","0","2",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ WFO       : Factor w/ 542 levels ""," CI","$AC",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ STATEOFFIC: Factor w/ 250 levels "","ALABAMA, Central",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ ZONENAMES : Factor w/ 25112 levels "","                                                                                                                               "| __truncated__,..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -49,14 +49,53 @@ str(data)
 ##  $ LONGITUDE : num  8812 8755 8742 8626 8642 ...
 ##  $ LATITUDE_E: num  3051 0 0 0 0 ...
 ##  $ LONGITUDE_: num  8806 0 0 0 0 ...
-##  $ REMARKS   : Factor w/ 436781 levels "","\t","\t\t",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ REMARKS   : Factor w/ 436781 levels "","-2 at Deer Park\n",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ REFNUM    : num  1 2 3 4 5 6 7 8 9 10 ...
+```
+
+We start off by converting the BGN_DATE column data to date-type. We also discard the time data in this column:
+
+
+```r
+data$BGN_DATE<-as.Date(as.character(data$BGN_DATE), "%m/%d/%Y")
+```
+
+And check that the converstion is OK:
+
+```r
+str(data$BGN_DATE)
+```
+
+```
+##  Date[1:902297], format: "1950-04-18" "1950-04-18" "1951-02-20" "1951-06-08" ...
 ```
 
 ## Analysis
 
 ### The analysis of Fatalities and Injuries. Summary statistics for the United States.
-We order the dataset based on the fatalities and injuries.
+We take a look at what timeframe we are investigating. 
+
+The first date is
+
+```r
+min(data$BGN_DATE)
+```
+
+```
+## [1] "1950-01-03"
+```
+
+while the last date in the dataset is 
+
+```r
+max(data$BGN_DATE)
+```
+
+```
+## [1] "2011-11-30"
+```
+
+We want to find out what are the most harmful weather effects to the population in the United States over the whole timeframe in question. To this end, we will look at fatalities and injuries. We will investigate these seperatly. We order the dataset based on the fatalities and injuries.
 
 
 ```r
@@ -77,15 +116,15 @@ fatalities
 
 ```
 ##             EVTYPE freq
-## 826        TORNADO 5633
-## 124 EXCESSIVE HEAT 1903
-## 151    FLASH FLOOD  978
-## 271           HEAT  937
-## 453      LIGHTNING  816
-## 846      TSTM WIND  504
-## 167          FLOOD  470
-## 572    RIP CURRENT  368
-## 343      HIGH WIND  248
+## 834        TORNADO 5633
+## 130 EXCESSIVE HEAT 1903
+## 153    FLASH FLOOD  978
+## 275           HEAT  937
+## 464      LIGHTNING  816
+## 856      TSTM WIND  504
+## 170          FLOOD  470
+## 585    RIP CURRENT  368
+## 359      HIGH WIND  248
 ## 19       AVALANCHE  224
 ```
 
@@ -96,20 +135,20 @@ injuries
 
 ```
 ##                EVTYPE  freq
-## 826           TORNADO 91346
-## 846         TSTM WIND  6957
-## 167             FLOOD  6789
-## 124    EXCESSIVE HEAT  6525
-## 453         LIGHTNING  5230
-## 271              HEAT  2100
-## 422         ICE STORM  1975
-## 151       FLASH FLOOD  1777
-## 753 THUNDERSTORM WIND  1488
-## 241              HAIL  1361
+## 834           TORNADO 91346
+## 856         TSTM WIND  6957
+## 170             FLOOD  6789
+## 130    EXCESSIVE HEAT  6525
+## 464         LIGHTNING  5230
+## 275              HEAT  2100
+## 427         ICE STORM  1975
+## 153       FLASH FLOOD  1777
+## 760 THUNDERSTORM WIND  1488
+## 244              HAIL  1361
 ```
 
 
-From the two tables, we see that Tornados are the most harmful weather events to public health.
+From the two tables, we see that in the time period from 1950-01-03 to 2011-11-30, Tornados are the most harmful weather events to public health.
 
 ### The analysis of Fatalities and Injuries. State-by-state analysis.
 
@@ -117,16 +156,16 @@ We would like to analyze the fatalities and injuries caused by weather in each s
 
 
 ```r
-fatalities_by_state<-data[order(data$STATE, -data$FATALITIES),]
-injuries_by_state<-data[order(data$STATE, -data$INJURIES),]
+fatalities_by_state_tmp<-data[order(data$STATE, -data$FATALITIES),]
+injuries_by_state_tmp<-data[order(data$STATE, -data$INJURIES),]
 ```
 
 We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
 
 
 ```r
-fatalities_by_state<-fatalities_by_state[,c("STATE", "EVTYPE", "FATALITIES")]
-injuries_by_state<-injuries_by_state[,c("STATE", "EVTYPE", "INJURIES")]
+fatalities_by_state<-fatalities_by_state_tmp[,c("STATE", "EVTYPE", "FATALITIES")]
+injuries_by_state<-injuries_by_state_tmp[,c("STATE", "EVTYPE", "INJURIES")]
 ```
 
 Then sum the datasets by state:
