@@ -1,8 +1,4 @@
----
-title: Severe weather events on population health and economics.
-author: "Bjorgvin Reynisson"
-output: html_document
----
+# Severe weather events on population health and economics.
 
 ## Synopsis
 

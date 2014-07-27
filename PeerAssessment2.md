@@ -1,8 +1,4 @@
----
-title: Severe weather events on population health and economics.
-author: "Bjorgvin Reynisson"
-output: html_document
----
+# Severe weather events on population health and economics.
 
 ## Synopsis
 
@@ -113,7 +109,7 @@ injuries
 ```
 
 
-From the two tables, tornados seem to be the most harmful weather effect to population health across the United States.
+From the two tables, we see that Tornados are the most harmful weather events to public health.
 
 ### The analysis of Fatalities and Injuries. State-by-state analysis.
 
