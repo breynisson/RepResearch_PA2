@@ -72,7 +72,7 @@ str(data$BGN_DATE)
 
 ## Analysis
 
-### Analysis of Fatalities and Injuries. Summary statistics for the United States.
+### Fatalities and Injuries. Summary statistics for the United States.
 We take a look at what timeframe we are investigating. 
 
 The first date is
@@ -150,7 +150,7 @@ injuries
 
 From the two tables, we see that in the time period from 1950-01-03 to 2011-11-30, Tornados are the most harmful weather events to public health.
 
-### Analysis of Fatalities and Injuries. State-by-state analysis.
+### Fatalities and Injuries. State-by-state analysis.
 
 We would like to analyze the fatalities and injuries caused by weather in each state.
 
@@ -363,6 +363,23 @@ top_injuries_per_state
 ## 71    WY             WINTER STORM      119
 ## 72    XX MARINE THUNDERSTORM WIND        0
 ```
+
+
+Let's make perperations for displaying the data:
+
+```r
+library(ggplot2)
+library(maps)
+library(datasets)
+all_states<-map_data("state")
+state_names<-data.frame(STATE=state.abb, State=tolower(state.name))
+tmp<-merge(top_fatalities_per_state, state_names)
+p<-ggplot()
+p<- p + geom_polygon(data=all_states, aes(x=long, y=lat, group = group),colour="white", fill="grey10" )
+```
+
+
+### Economic Consequences. Summary statistics for the United States.
 
 
 
