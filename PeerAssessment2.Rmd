@@ -169,7 +169,7 @@ library(gridExtra)
 grid.arrange(arrangeGrob(arrangeGrob(fp, ip), ncol=1))
 ```
 
-```{r, fig.cap='Fatalities/Injuries per State due to weather events}
+```{r, fig.cap="Fatalities/Injuries per State due to weather events"}
 subplot<-function(r,c){
   viewport(layout.pos.col=c, layout.pos.row=r)
 }

@@ -372,17 +372,20 @@ top_injuries_per_state
 ```
 
 
-Let's make preperations for displaying the data :
+Let's make preperations to display the Fatalities per State and Injuries per State:
 
 ```r
 library(ggplot2)
 library(maps)
 library(datasets)
+
 all_states<-map_data("state")
 state_names<-data.frame(STATE=state.abb, region=tolower(state.name))
-tmp<-merge(top_fatalities_per_state, state_names)
-map_data<-merge(tmp, all_states, by='region')
-ggplot(map_data, aes(map_id = region)) +
+
+tmp_fat<-merge(total_fatalities_per_state, state_names)
+map_data_fat<-merge(tmp_fat, all_states, by='region')
+
+fp<-ggplot(map_data_fat, aes(map_id = region)) +
   geom_map(aes(fill = FATALITIES), map = all_states, color ="black") +
   expand_limits(x = all_states$long, y = all_states$lat) +
   theme(legend.position = "bottom",
@@ -391,11 +394,54 @@ ggplot(map_data, aes(map_id = region)) +
         axis.text =  element_blank()) +
   scale_fill_gradient(low="white", high="red") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
-  ggtitle("")
+  ggtitle("Total Fatalities per State due to weather events")
+
+tmp_inj<-merge(total_injuries_per_state, state_names)
+map_data_inj<-merge(tmp_inj, all_states, by='region')
+
+ip<-ggplot(map_data_inj, aes(map_id = region)) +
+  geom_map(aes(fill = INJURIES), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("Injuries")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
 
+```r
+library(gridExtra)
+```
+
+```
+## Loading required package: grid
+```
+
+```r
+grid.arrange(arrangeGrob(arrangeGrob(fp, ip), ncol=1))
+```
+
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
+
+
+```r
+subplot<-function(r,c){
+  viewport(layout.pos.col=c, layout.pos.row=r)
+}
+
+vplayout<-function(r,c){
+  grid.newpage()
+  pushViewport(viewport(layout=grid.layout(r,c)))
+}
+vplayout(1,2)
+plot(fp, vp=subplot(1,1))
+plot(ip, vp=subplot(1,2))
+```
+
+![Fatalities/Injuries per State due to weather events](figure/unnamed-chunk-17.png) 
 
 ### Economic Consequences. Summary statistics for the United States.
 
