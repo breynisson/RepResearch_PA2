@@ -378,6 +378,7 @@ Let's make preperations to display the Fatalities per State and Injuries per Sta
 library(ggplot2)
 library(maps)
 library(datasets)
+library(gridExtra)
 
 all_states<-map_data("state")
 state_names<-data.frame(STATE=state.abb, region=tolower(state.name))
@@ -414,13 +415,15 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
 
 
 ```r
-library(gridExtra)
 grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State"))
 ```
 
 ![plot of chunk popHealthPerState](figure/popHealthPerState.png) 
 
+### Property and Crop Damage. State-by-state analysis.
+The dataset contains two columns for property damage; PROPDMG and PROPDMGEXP. In the same manner, there are two columns for crop damage; CROPDMG and CROPDMGEXP. 
 
+We will make two new variables, which will hold the calculated property damage for each row. That is PROPERTYDAMAGEVALUE = PROPDMG * PROPDMGEXP and CROPDAMAGEVALUE = CROPDMG * CROPDMGEXP. 
 
 ## Results
 

@@ -130,6 +130,7 @@ Let's make preperations to display the Fatalities per State and Injuries per Sta
 library(ggplot2)
 library(maps)
 library(datasets)
+library(gridExtra)
 
 all_states<-map_data("state")
 state_names<-data.frame(STATE=state.abb, region=tolower(state.name))
@@ -165,15 +166,70 @@ ip<-ggplot(map_data_inj, aes(map_id = region)) +
 
 
 ```{r popHealthPerState, fig.height=6, fig.width=12}
-library(gridExtra)
 grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State"))
 ```
 
 
+### Property and Crop Damage. Summary statistics for the United States.
+The dataset contains two columns for property damage; PROPDMG and PROPDMGEXP. In the same manner, there are two columns for crop damage; CROPDMG and CROPDMGEXP. 
+
+We will make two new variables, which will hold the calculated property damage for each row. That is PROPERTYDAMAGEVALUE = PROPDMG * PROPDMGEXP and CROPDAMAGEVALUE = CROPDMG * CROPDMGEXP. 
+
+Let's look at the data for PROPDMGEXP:
+```{r}
+table(data$PROPDMGEXP)
+```
+
+We do see that there are a few different values here, and it is not clear how to handle many of those. The course of action taken here, is that we take K for Thousands, M for Millions and B for Billions. Any other value will be substituted with a value of "1".  The same approach is taken for the CROPDMEXP values.
+
+We start by setting the PROPDMGEXP AND CROPDMGEXP columns to lowercase. Then, new variables are made: PROPERTYDMGEXPNUMBER and CROPDMGEXPNUMBER.
+```{r}
+data$PROPDMGEXP<-tolower(data$PROPDMGEXP)
+data$PROPERTYDMGEXPNUMBER<-1
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="k"]<-1000
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="m"]<-1000000
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="b"]<-1000000000
+
+data$CROPDMGEXP<-tolower(data$CROPDMGEXP)
+data$CROPDMGEXPNUMBER<-1
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="k"]<-1000
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="m"]<-1000000
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="b"]<-1000000000
+```
+
+We then find the numeric value for property and cropdamages:
+```{r}
+data$PROPERTYDAMAGEVALUE<-data$PROPDMG * data$PROPERTYDMGEXPNUMBER
+data$CROPDAMAGEVALUE<-data$CROPDMG * data$CROPDMGEXPNUMBER
+```
+
+
+We can now calculate the total economic damage (property and crop) within the timeframe:
+```{r}
+library(scales)
+totalPropertyDamage<-sum(data$PROPERTYDAMAGEVALUE) + sum(data$CROPDAMAGEVALUE)
+dollar(totalPropertyDamage)
+```
+
+
+### Property and Crop Damage. State-by-state analysis.
+
+We would like to analyze the property damage and crop damage caused by weather in each state.
+
+```{r}
+propdmg_by_state_tmp<-data[order(data$STATE, -data$PROPERTYDAMAGEVALUE),]
+cropdmg_by_state_tmp<-data[order(data$STATE, -data$CROPDAMAGEVALUE),]
+```
+
+We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
+
+```{r}
+propdmg_by_state<-propdmg_by_state_tmp[,c("STATE", "EVTYPE", "FATALITIES")]
+cropdmg_by_state<-cropdmg_by_state_tmp[,c("STATE", "EVTYPE", "INJURIES")]
+```
+
 
 ## Results
-
-
 
 
 
