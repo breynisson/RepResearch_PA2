@@ -184,6 +184,7 @@ We do see that there are a few different values here, and it is not clear how to
 
 We start by setting the PROPDMGEXP AND CROPDMGEXP columns to lowercase. Then, new variables are made: PROPERTYDMGEXPNUMBER and CROPDMGEXPNUMBER.
 ```{r}
+library(scales)
 data$PROPDMGEXP<-tolower(data$PROPDMGEXP)
 data$PROPERTYDMGEXPNUMBER<-1
 data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="k"]<-1000
@@ -203,10 +204,30 @@ data$PROPERTYDAMAGEVALUE<-data$PROPDMG * data$PROPERTYDMGEXPNUMBER
 data$CROPDAMAGEVALUE<-data$CROPDMG * data$CROPDMGEXPNUMBER
 ```
 
+```{r}
+propertydamage<-count(data, vars = "EVTYPE", wt_var = "PROPERTYDAMAGEVALUE")
+propertydamage<-propertydamage[order(-propertydamage$freq),]
+
+cropdamage<-count(data, vars = "EVTYPE", wt_var = "CROPDAMAGEVALUE")
+cropdamage<-cropdamage[order(-cropdamage$freq),]
+```
+
+And then reduce the data to the top 10 causes:
+```{r}
+names(propertydamage)[names(propertydamage)=="freq"] <- "value"
+propertydamage<-propertydamage[1:10,]
+propertydamage$value<-dollar(propertydamage$value)
+propertydamage
+
+cropdamage<-cropdamage[1:10,]
+cropdamage
+```
+
+
+
 
 We can now calculate the total economic damage (property and crop) within the timeframe:
 ```{r}
-library(scales)
 totalPropertyDamage<-sum(data$PROPERTYDAMAGEVALUE) + sum(data$CROPDAMAGEVALUE)
 dollar(totalPropertyDamage)
 ```
@@ -284,7 +305,7 @@ top_cropdmg_per_state
 
 We then visualize the property damage and crop damage per state:
 ```{r}
-tmp_propdmg<-merge(top_propdmg_per_state, state_names)
+tmp_propdmg<-merge(propdmg_by_state_per_state, state_names)
 map_data_propdmg<-merge(tmp_propdmg, all_states, by='region')
 
 pr<-ggplot(map_data_propdmg, aes(map_id = region)) +
@@ -294,11 +315,11 @@ pr<-ggplot(map_data_propdmg, aes(map_id = region)) +
         axis.ticks = element_blank(), 
         axis.title = element_blank(), 
         axis.text =  element_blank()) +
-  scale_fill_gradient(low="white", high="red") +
+  scale_fill_gradient(low="white", high="purple") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
   ggtitle("")
 
-tmp_cropdmg<-merge(top_cropdmg_per_state, state_names)
+tmp_cropdmg<-merge(cropdmg_by_state_per_state, state_names)
 map_data_cropdmg<-merge(tmp_cropdmg, all_states, by='region')
 
 cr<-ggplot(map_data_cropdmg, aes(map_id = region)) +
@@ -308,7 +329,7 @@ cr<-ggplot(map_data_cropdmg, aes(map_id = region)) +
         axis.ticks = element_blank(), 
         axis.title = element_blank(), 
         axis.text =  element_blank()) +
-  scale_fill_gradient(low="white", high="red") +
+  scale_fill_gradient(low="white", high="purple") +
   guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
   ggtitle("")
 ```
@@ -320,7 +341,7 @@ grid.arrange(arrangeGrob(pr, cr, ncol=2, main="Property and Crop Damage per Stat
 
 ## Results
 
-
+This report examines the effects of 
 
 
 
