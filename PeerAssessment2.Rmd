@@ -221,11 +221,100 @@ propdmg_by_state_tmp<-data[order(data$STATE, -data$PROPERTYDAMAGEVALUE),]
 cropdmg_by_state_tmp<-data[order(data$STATE, -data$CROPDAMAGEVALUE),]
 ```
 
-We trim the data to just the STATE, EVTYPE and FATALITIES or INJURIES variables.
+We trim the data to just the STATE, EVTYPE and PROPERTYDAMAGEVALUE or CROPDAMAGEVALUE variables.
 
 ```{r}
-propdmg_by_state<-propdmg_by_state_tmp[,c("STATE", "EVTYPE", "FATALITIES")]
-cropdmg_by_state<-cropdmg_by_state_tmp[,c("STATE", "EVTYPE", "INJURIES")]
+propdmg_by_state<-propdmg_by_state_tmp[,c("STATE", "EVTYPE", "PROPERTYDAMAGEVALUE")]
+cropdmg_by_state<-cropdmg_by_state_tmp[,c("STATE", "EVTYPE", "CROPDAMAGEVALUE")]
+```
+
+Then sum the datasets by state:
+
+```{r}
+propdmg_by_state_s<-ddply(propdmg_by_state, .(STATE, EVTYPE), 
+                          summarize, 
+                          PROPERTYDAMAGEVALUE=sum(PROPERTYDAMAGEVALUE))
+
+propdmg_by_state_per_state<-ddply(propdmg_by_state, .(STATE), 
+                                  summarize, 
+                                  PROPERTYDAMAGEVALUE=sum(PROPERTYDAMAGEVALUE))
+
+cropdmg_by_state_s<-ddply(cropdmg_by_state, .(STATE, EVTYPE),
+                          summarize, 
+                          CROPDAMAGEVALUE=sum(CROPDAMAGEVALUE))
+
+cropdmg_by_state_per_state<-ddply(cropdmg_by_state, .(STATE), 
+                             summarize, 
+                             CROPDAMAGEVALUE=sum(CROPDAMAGEVALUE))
+
+```
+
+And sort by decsending number of property/crop damage per state:
+
+```{r}
+propdmg_by_state_r<-arrange(propdmg_by_state_s, 
+                               propdmg_by_state_s$STATE,
+                               -propdmg_by_state_s$PROPERTYDAMAGEVALUE)
+cropdmg_by_state_r<-arrange(cropdmg_by_state_s, 
+                               cropdmg_by_state_s$STATE,
+                               -cropdmg_by_state_s$CROPDAMAGEVALUE)
+
+```
+
+We reduce the data to the top property/crop damage causes in each state:
+
+```{r}
+top_propdmg_per_state<-ddply(propdmg_by_state_r, .(STATE), 
+                                function(x)x[1,])
+top_cropdmg_per_state<-ddply(cropdmg_by_state_r, .(STATE), 
+                              function(x)x[1,])
+```
+
+**Top causes of Property damage per State:**
+```{r}
+top_propdmg_per_state$PROPERTYDAMAGEVALUE<-dollar(top_propdmg_per_state$PROPERTYDAMAGEVALUE)
+top_propdmg_per_state
+```
+
+**Top causes of Crop damage per State:**
+```{r}
+top_cropdmg_per_state$CROPDAMAGEVALUE<-dollar(top_cropdmg_per_state$CROPDAMAGEVALUE)
+top_cropdmg_per_state
+```
+
+We then visualize the property damage and crop damage per state:
+```{r}
+tmp_propdmg<-merge(top_propdmg_per_state, state_names)
+map_data_propdmg<-merge(tmp_propdmg, all_states, by='region')
+
+pr<-ggplot(map_data_propdmg, aes(map_id = region)) +
+  geom_map(aes(fill = PROPERTYDAMAGEVALUE), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("")
+
+tmp_cropdmg<-merge(top_cropdmg_per_state, state_names)
+map_data_cropdmg<-merge(tmp_cropdmg, all_states, by='region')
+
+cr<-ggplot(map_data_cropdmg, aes(map_id = region)) +
+  geom_map(aes(fill = CROPDAMAGEVALUE), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("")
+```
+
+```{r economicDmgPerState, fig.height=6, fig.width=12}
+grid.arrange(arrangeGrob(pr, cr, ncol=2, main="Property and Crop Damage per State"))
 ```
 
 

@@ -420,14 +420,335 @@ grid.arrange(arrangeGrob(fp, ip, ncol=2, main="Fatalities and Injuries per State
 
 ![plot of chunk popHealthPerState](figure/popHealthPerState.png) 
 
-### Property and Crop Damage. State-by-state analysis.
+
+### Property and Crop Damage. Summary statistics for the United States.
 The dataset contains two columns for property damage; PROPDMG and PROPDMGEXP. In the same manner, there are two columns for crop damage; CROPDMG and CROPDMGEXP. 
 
 We will make two new variables, which will hold the calculated property damage for each row. That is PROPERTYDAMAGEVALUE = PROPDMG * PROPDMGEXP and CROPDAMAGEVALUE = CROPDMG * CROPDMGEXP. 
 
+Let's look at the data for PROPDMGEXP:
+
+```r
+table(data$PROPDMGEXP)
+```
+
+```
+## 
+##             -      ?      +      0      1      2      3      4      5 
+## 465934      1      8      5    216     25     13      4      4     28 
+##      6      7      8      B      h      H      K      m      M 
+##      4      5      1     40      1      6 424665      7  11330
+```
+
+We do see that there are a few different values here, and it is not clear how to handle many of those. The course of action taken here, is that we take K for Thousands, M for Millions and B for Billions. Any other value will be substituted with a value of "1".  The same approach is taken for the CROPDMEXP values.
+
+We start by setting the PROPDMGEXP AND CROPDMGEXP columns to lowercase. Then, new variables are made: PROPERTYDMGEXPNUMBER and CROPDMGEXPNUMBER.
+
+```r
+data$PROPDMGEXP<-tolower(data$PROPDMGEXP)
+data$PROPERTYDMGEXPNUMBER<-1
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="k"]<-1000
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="m"]<-1000000
+data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="b"]<-1000000000
+
+data$CROPDMGEXP<-tolower(data$CROPDMGEXP)
+data$CROPDMGEXPNUMBER<-1
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="k"]<-1000
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="m"]<-1000000
+data$CROPDMGEXPNUMBER[data$CROPDMGEXP=="b"]<-1000000000
+```
+
+We then find the numeric value for property and cropdamages:
+
+```r
+data$PROPERTYDAMAGEVALUE<-data$PROPDMG * data$PROPERTYDMGEXPNUMBER
+data$CROPDAMAGEVALUE<-data$CROPDMG * data$CROPDMGEXPNUMBER
+```
+
+
+We can now calculate the total economic damage (property and crop) within the timeframe:
+
+```r
+library(scales)
+totalPropertyDamage<-sum(data$PROPERTYDAMAGEVALUE) + sum(data$CROPDAMAGEVALUE)
+dollar(totalPropertyDamage)
+```
+
+```
+## [1] "$476,422,842,480"
+```
+
+
+### Property and Crop Damage. State-by-state analysis.
+
+We would like to analyze the property damage and crop damage caused by weather in each state.
+
+
+```r
+propdmg_by_state_tmp<-data[order(data$STATE, -data$PROPERTYDAMAGEVALUE),]
+cropdmg_by_state_tmp<-data[order(data$STATE, -data$CROPDAMAGEVALUE),]
+```
+
+We trim the data to just the STATE, EVTYPE and PROPERTYDAMAGEVALUE or CROPDAMAGEVALUE variables.
+
+
+```r
+propdmg_by_state<-propdmg_by_state_tmp[,c("STATE", "EVTYPE", "PROPERTYDAMAGEVALUE")]
+cropdmg_by_state<-cropdmg_by_state_tmp[,c("STATE", "EVTYPE", "CROPDAMAGEVALUE")]
+```
+
+Then sum the datasets by state:
+
+
+```r
+propdmg_by_state_s<-ddply(propdmg_by_state, .(STATE, EVTYPE), 
+                          summarize, 
+                          PROPERTYDAMAGEVALUE=sum(PROPERTYDAMAGEVALUE))
+
+propdmg_by_state_per_state<-ddply(propdmg_by_state, .(STATE), 
+                                  summarize, 
+                                  PROPERTYDAMAGEVALUE=sum(PROPERTYDAMAGEVALUE))
+
+cropdmg_by_state_s<-ddply(cropdmg_by_state, .(STATE, EVTYPE),
+                          summarize, 
+                          CROPDAMAGEVALUE=sum(CROPDAMAGEVALUE))
+
+cropdmg_by_state_per_state<-ddply(cropdmg_by_state, .(STATE), 
+                             summarize, 
+                             CROPDAMAGEVALUE=sum(CROPDAMAGEVALUE))
+```
+
+And sort by decsending number of property/crop damage per state:
+
+
+```r
+propdmg_by_state_r<-arrange(propdmg_by_state_s, 
+                               propdmg_by_state_s$STATE,
+                               -propdmg_by_state_s$PROPERTYDAMAGEVALUE)
+cropdmg_by_state_r<-arrange(cropdmg_by_state_s, 
+                               cropdmg_by_state_s$STATE,
+                               -cropdmg_by_state_s$CROPDAMAGEVALUE)
+```
+
+We reduce the data to the top property/crop damage causes in each state:
+
+
+```r
+top_propdmg_per_state<-ddply(propdmg_by_state_r, .(STATE), 
+                                function(x)x[1,])
+top_cropdmg_per_state<-ddply(cropdmg_by_state_r, .(STATE), 
+                              function(x)x[1,])
+```
+
+**Top causes of Property damage per State:**
+
+```r
+top_propdmg_per_state$PROPERTYDAMAGEVALUE<-dollar(top_propdmg_per_state$PROPERTYDAMAGEVALUE)
+top_propdmg_per_state
+```
+
+```
+##    STATE                   EVTYPE PROPERTYDAMAGEVALUE
+## 1     AK                    FLOOD        $157,131,940
+## 2     AL                  TORNADO      $6,321,296,560
+## 3     AM               WATERSPOUT          $5,102,000
+## 4     AN MARINE THUNDERSTORM WIND            $169,000
+## 5     AR                  TORNADO      $2,590,007,310
+## 6     AS                  TSUNAMI         $81,000,000
+## 7     AZ                     HAIL      $2,828,908,700
+## 8     CA                    FLOOD    $116,751,420,000
+## 9     CO                     HAIL      $1,423,944,785
+## 10    CT                  TORNADO        $596,236,620
+## 11    DC           TROPICAL STORM        $127,600,000
+## 12    DE            COASTAL FLOOD         $40,150,000
+## 13    FL        HURRICANE/TYPHOON     $27,596,865,000
+## 14    GA                  TORNADO      $3,261,026,670
+## 15    GM         MARINE TSTM WIND          $3,226,000
+## 16    GU                  TYPHOON        $600,230,000
+## 17    HI              FLASH FLOOD        $156,508,000
+## 18    IA                  TORNADO      $2,286,576,200
+## 19    ID                    FLOOD        $114,192,000
+## 20    IL              RIVER FLOOD      $5,021,900,000
+## 21    IN                  TORNADO      $2,594,793,890
+## 22    KS                  TORNADO      $2,669,890,670
+## 23    KY                  TORNADO        $888,768,680
+## 24    LA              STORM SURGE     $31,742,735,000
+## 25    LC              MARINE HAIL                  $0
+## 26    LE MARINE THUNDERSTORM WIND             $25,000
+## 27    LH              MARINE HAIL                  $0
+## 28    LM         MARINE TSTM WIND          $1,205,000
+## 29    LO         MARINE TSTM WIND             $50,000
+## 30    LS         MARINE TSTM WIND            $400,000
+## 31    MA                  TORNADO        $756,039,145
+## 32    MD           TROPICAL STORM        $538,505,000
+## 33    ME                ICE STORM        $318,230,000
+## 34    MH                HIGH SURF          $5,000,000
+## 35    MI                  TORNADO      $1,071,765,550
+## 36    MN                  TORNADO      $1,903,701,140
+## 37    MO                  TORNADO      $4,800,631,725
+## 38    MS        HURRICANE/TYPHOON     $13,492,735,000
+## 39    MT                     HAIL         $94,729,700
+## 40    NC                HURRICANE      $4,979,861,000
+## 41    ND                    FLOOD      $3,916,842,000
+## 42    NE                  TORNADO      $1,718,164,710
+## 43    NH                ICE STORM         $64,934,000
+## 44    NJ                    FLOOD      $2,111,650,000
+## 45    NM         WILD/FOREST FIRE      $1,509,700,000
+## 46    NV                    FLOOD        $677,945,000
+## 47    NY              FLASH FLOOD      $1,831,088,500
+## 48    OH                  TORNADO      $2,279,857,790
+## 49    OK                  TORNADO      $3,268,708,233
+## 50    OR                    FLOOD        $722,172,500
+## 51    PA                  TORNADO      $1,789,038,400
+## 52    PH       MARINE STRONG WIND                  $0
+## 53    PK         MARINE HIGH WIND             $31,000
+## 54    PM               WATERSPOUT                  $0
+## 55    PR                HURRICANE      $1,824,431,000
+## 56    PZ       MARINE STRONG WIND             $76,000
+## 57    RI                    FLOOD         $92,860,000
+## 58    SC                  TORNADO        $531,505,190
+## 59    SD                  TORNADO        $231,213,780
+## 60    SL         MARINE TSTM WIND             $15,000
+## 61    ST             STRONG WINDS                  $0
+## 62    TN                    FLOOD      $4,245,346,300
+## 63    TX           TROPICAL STORM      $5,491,193,000
+## 64    UT                    FLOOD        $331,761,500
+## 65    VA        HURRICANE/TYPHOON        $512,000,000
+## 66    VI                HURRICANE         $28,220,000
+## 67    VT                    FLOOD      $1,100,484,000
+## 68    WA                    FLOOD        $212,683,000
+## 69    WI                     HAIL        $961,723,350
+## 70    WV              FLASH FLOOD        $485,226,100
+## 71    WY                     HAIL        $111,221,705
+## 72    XX MARINE THUNDERSTORM WIND                  $0
+```
+
+**Top causes of Crop damage per State:**
+
+```r
+top_cropdmg_per_state$CROPDAMAGEVALUE<-dollar(top_cropdmg_per_state$CROPDAMAGEVALUE)
+top_cropdmg_per_state
+```
+
+```
+##    STATE                   EVTYPE CROPDAMAGEVALUE
+## 1     AK                HIGH WIND        $157,000
+## 2     AL                     HEAT    $400,100,000
+## 3     AM MARINE THUNDERSTORM WIND         $50,000
+## 4     AN              MARINE HAIL              $0
+## 5     AR                    FLOOD    $141,065,000
+## 6     AS              FLASH FLOOD      $1,267,000
+## 7     AZ           TROPICAL STORM    $200,000,000
+## 8     CA             EXTREME COLD    $731,160,000
+## 9     CO                     HAIL    $116,490,000
+## 10    CT                     HAIL         $30,000
+## 11    DC                  DROUGHT          $5,000
+## 12    DE                  DROUGHT     $29,100,000
+## 13    FL        HURRICANE/TYPHOON    $955,200,000
+## 14    GA                  DROUGHT    $717,285,000
+## 15    GM              MARINE HAIL              $0
+## 16    GU                HURRICANE    $100,480,000
+## 17    HI                HIGH WIND      $2,600,000
+## 18    IA                  DROUGHT  $2,009,630,000
+## 19    ID           TSTM WIND/HAIL      $6,002,000
+## 20    IL              RIVER FLOOD  $5,012,500,000
+## 21    IN                    FLOOD    $698,198,000
+## 22    KS                     HAIL    $259,405,300
+## 23    KY                  DROUGHT    $226,000,000
+## 24    LA                  DROUGHT    $587,430,000
+## 25    LC              MARINE HAIL              $0
+## 26    LE              MARINE HAIL              $0
+## 27    LH              MARINE HAIL              $0
+## 28    LM              MARINE HAIL              $0
+## 29    LO              MARINE HAIL              $0
+## 30    LS              MARINE HAIL              $0
+## 31    MA        THUNDERSTORM WIND      $1,250,000
+## 32    MD                  DROUGHT     $99,720,000
+## 33    ME              HEAVY RAINS        $500,000
+## 34    MH                HIGH SURF              $0
+## 35    MI                  DROUGHT    $150,000,000
+## 36    MN                     HAIL    $140,700,800
+## 37    MO                    FLOOD    $593,040,000
+## 38    MS                ICE STORM  $5,000,060,000
+## 39    MT                     HAIL     $34,345,000
+## 40    NC                HURRICANE  $1,425,130,000
+## 41    ND                     HAIL    $189,355,003
+## 42    NE                     HAIL    $737,993,650
+## 43    NH                    FLOOD        $200,000
+## 44    NJ                  DROUGHT     $80,000,000
+## 45    NM                  DROUGHT     $14,400,000
+## 46    NV                    FLOOD      $6,000,000
+## 47    NY                  DROUGHT    $100,200,000
+## 48    OH                  DROUGHT    $200,000,000
+## 49    OK                  DROUGHT  $1,097,040,000
+## 50    OR                     HAIL     $36,028,000
+## 51    PA                  DROUGHT    $539,400,000
+## 52    PH       MARINE STRONG WIND              $0
+## 53    PK         MARINE HIGH WIND              $0
+## 54    PM               WATERSPOUT              $0
+## 55    PR                HURRICANE    $451,000,000
+## 56    PZ         MARINE HIGH WIND              $0
+## 57    RI                 BLIZZARD              $0
+## 58    SC                HURRICANE     $20,300,000
+## 59    SD                     HAIL     $64,274,050
+## 60    SL              MARINE HAIL              $0
+## 61    ST             STRONG WINDS              $0
+## 62    TN                TSTM WIND      $9,146,500
+## 63    TX                  DROUGHT  $6,373,438,000
+## 64    UT                HIGH WIND      $1,110,000
+## 65    VA                  DROUGHT    $297,480,000
+## 66    VI                  DROUGHT        $200,000
+## 67    VT              FLASH FLOOD     $14,725,000
+## 68    WA                     HAIL    $209,501,000
+## 69    WI                    FLOOD    $466,888,500
+## 70    WV                  DROUGHT     $19,746,000
+## 71    WY                     HAIL      $1,881,200
+## 72    XX MARINE THUNDERSTORM WIND              $0
+```
+
+We then visualize the property damage and crop damage per state:
+
+```r
+tmp_propdmg<-merge(top_propdmg_per_state, state_names)
+map_data_propdmg<-merge(tmp_propdmg, all_states, by='region')
+
+pr<-ggplot(map_data_propdmg, aes(map_id = region)) +
+  geom_map(aes(fill = PROPERTYDAMAGEVALUE), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("")
+
+tmp_cropdmg<-merge(top_cropdmg_per_state, state_names)
+map_data_cropdmg<-merge(tmp_cropdmg, all_states, by='region')
+
+cr<-ggplot(map_data_cropdmg, aes(map_id = region)) +
+  geom_map(aes(fill = CROPDAMAGEVALUE), map = all_states, color ="black") +
+  expand_limits(x = all_states$long, y = all_states$lat) +
+  theme(legend.position = "bottom",
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text =  element_blank()) +
+  scale_fill_gradient(low="white", high="red") +
+  guides(fill = guide_colorbar(barwidth = 10, barheight = .5)) + 
+  ggtitle("")
+```
+
+
+```r
+grid.arrange(arrangeGrob(pr, cr, ncol=2, main="Property and Crop Damage per State"))
+```
+
+```
+## Error: Discrete value supplied to continuous scale
+```
+
+
 ## Results
-
-
 
 
 
