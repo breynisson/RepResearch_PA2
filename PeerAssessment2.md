@@ -1,6 +1,7 @@
 # Severe weather events on population health and economics.
 
 ## Synopsis
+This report analyzes weather data from the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database with focus on which weather events have the biggest impact on population health and the economy. The analysis presented here can be broken down into Summary Statistics for the United States and State by State Analysis. The report looks at Fatalities and Injuries in one section and Property and Crop Damage in the second. The report finds that Tornados are the most harmful weather event with regards to population health, while floods are the main cause of property damage and drought the main cause of crop damage.
 
 ## Data Processing
 
@@ -111,6 +112,12 @@ And then reduce the data to the top 10 causes:
 
 ```r
 fatalities<-fatalities[1:10,]
+injuries<-injuries[1:10,]
+```
+
+#### The top 10 Weather Fatality Causes:
+
+```r
 fatalities
 ```
 
@@ -127,9 +134,9 @@ fatalities
 ## 343      HIGH WIND  248
 ## 19       AVALANCHE  224
 ```
+#### The top 10 Weather Injury Causes:
 
 ```r
-injuries<-injuries[1:10,]
 injuries
 ```
 
@@ -146,7 +153,6 @@ injuries
 ## 753 THUNDERSTORM WIND  1488
 ## 241              HAIL  1361
 ```
-
 
 From the two tables, we see that in the time period from 1950-01-03 to 2011-11-30, Tornados are the most harmful weather events to public health.
 
@@ -207,7 +213,7 @@ top_injuries_per_state<-ddply(injuries_by_state_r, .(STATE),
                               function(x)x[1,])
 ```
 
-**Top causes of Fatalities per State:**
+#### Top causes of Fatalities per State:
 
 ```r
 top_fatalities_per_state
@@ -289,7 +295,7 @@ top_fatalities_per_state
 ## 72    XX MARINE THUNDERSTORM WIND          0
 ```
 
-**Top causes of Injuries per State:**
+#### Top causes of Injuries per State:
 
 ```r
 top_injuries_per_state
@@ -445,6 +451,7 @@ We do see that there are a few different values here, and it is not clear how to
 We start by setting the PROPDMGEXP AND CROPDMGEXP columns to lowercase. Then, new variables are made: PROPERTYDMGEXPNUMBER and CROPDMGEXPNUMBER.
 
 ```r
+library(scales)
 data$PROPDMGEXP<-tolower(data$PROPDMGEXP)
 data$PROPERTYDMGEXPNUMBER<-1
 data$PROPERTYDMGEXPNUMBER[data$PROPDMGEXP=="k"]<-1000
@@ -477,51 +484,63 @@ cropdamage<-cropdamage[order(-cropdamage$freq),]
 And then reduce the data to the top 10 causes:
 
 ```r
-fatalities<-fatalities[1:10,]
-fatalities
+names(propertydamage)[names(propertydamage)=="freq"] <- "value"
+propertydamage<-propertydamage[1:10,]
+propertydamage$value<-dollar(propertydamage$value)
+names(cropdamage)[names(cropdamage)=="freq"]<-"value"
+cropdamage<-cropdamage[1:10,]
+cropdamage$value<-dollar(cropdamage$value)
 ```
 
-```
-##             EVTYPE freq
-## 826        TORNADO 5633
-## 124 EXCESSIVE HEAT 1903
-## 151    FLASH FLOOD  978
-## 271           HEAT  937
-## 453      LIGHTNING  816
-## 846      TSTM WIND  504
-## 167          FLOOD  470
-## 572    RIP CURRENT  368
-## 343      HIGH WIND  248
-## 19       AVALANCHE  224
-```
+#### The top 10 Weather Property Damage Causes:
 
 ```r
-injuries<-injuries[1:10,]
-injuries
+propertydamage
 ```
 
 ```
-##                EVTYPE  freq
-## 826           TORNADO 91346
-## 846         TSTM WIND  6957
-## 167             FLOOD  6789
-## 124    EXCESSIVE HEAT  6525
-## 453         LIGHTNING  5230
-## 271              HEAT  2100
-## 422         ICE STORM  1975
-## 151       FLASH FLOOD  1777
-## 753 THUNDERSTORM WIND  1488
-## 241              HAIL  1361
+##                EVTYPE            value
+## 167             FLOOD $144,657,709,807
+## 393 HURRICANE/TYPHOON  $69,305,840,000
+## 826           TORNADO  $56,937,160,779
+## 656       STORM SURGE  $43,323,536,000
+## 151       FLASH FLOOD  $16,140,812,067
+## 241              HAIL  $15,732,267,048
+## 385         HURRICANE  $11,868,319,010
+## 839    TROPICAL STORM   $7,703,890,550
+## 962      WINTER STORM   $6,688,497,251
+## 343         HIGH WIND   $5,270,046,295
 ```
 
+#### The top 10 Weather Property Damage Causes:
 
+```r
+cropdamage
+```
 
+```
+##                EVTYPE           value
+## 91            DROUGHT $13,972,566,000
+## 167             FLOOD  $5,661,968,450
+## 577       RIVER FLOOD  $5,029,459,000
+## 422         ICE STORM  $5,022,113,500
+## 241              HAIL  $3,025,954,473
+## 385         HURRICANE  $2,741,910,000
+## 393 HURRICANE/TYPHOON  $2,607,872,800
+## 151       FLASH FLOOD  $1,421,317,100
+## 132      EXTREME COLD  $1,292,973,000
+## 198      FROST/FREEZE  $1,094,086,000
+```
 
 We can now calculate the total economic damage (property and crop) within the timeframe:
 
 ```r
-library(scales)
 totalPropertyDamage<-sum(data$PROPERTYDAMAGEVALUE) + sum(data$CROPDAMAGEVALUE)
+```
+
+#### Total Property and Cropdamage from 1950-01-03 to 2011-11-30:
+
+```r
 dollar(totalPropertyDamage)
 ```
 
@@ -591,7 +610,7 @@ top_cropdmg_per_state<-ddply(cropdmg_by_state_r, .(STATE),
                               function(x)x[1,])
 ```
 
-**Top causes of Property damage per State:**
+#### Top causes of Property damage per State:
 
 ```r
 top_propdmg_per_state$PROPERTYDAMAGEVALUE<-dollar(top_propdmg_per_state$PROPERTYDAMAGEVALUE)
@@ -674,7 +693,7 @@ top_propdmg_per_state
 ## 72    XX MARINE THUNDERSTORM WIND                  $0
 ```
 
-**Top causes of Crop damage per State:**
+#### Top causes of Crop damage per State:
 
 ```r
 top_cropdmg_per_state$CROPDAMAGEVALUE<-dollar(top_cropdmg_per_state$CROPDAMAGEVALUE)
@@ -799,7 +818,15 @@ grid.arrange(arrangeGrob(pr, cr, ncol=2, main="Property and Crop Damage per Stat
 
 ## Results
 
-This report examines the effects of 
+This report examines the effects of severe weather on population health and the economy across the United States. 
+
+The results show that in the timeframe under investigation (1950-01-03 to 2011-11-30) the most harmful weather events with regards to population health are Tornados. Tornados are the main cause of both, with 5633 fatalities and 91346 injuries.
+
+The report also presents the top causes of fatalities and injuries for each state. A graph showing the fatalities and injuries per state is shown.
+
+The analysis shows that Flood is the top cause for property damage, estimated at over $144B. The top cause for crop damage is drought, estimated at over $13B.
+
+Tables showing the top causes of property damage and crop damage, with estimated monetary impact are shown. A graph showing the property and crop damages per state is shown.
 
 
 
